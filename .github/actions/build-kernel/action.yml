@@ -1252,61 +1252,55 @@ runs:
         EOF
         
         echo "::endgroup::"
-
+    
     - name: Apply NoMount
       shell: bash
       run: |
         set -euo pipefail
         echo "::group::Apply NoMount"
-    
         cd "$COMMON_KERNEL_FOLDER"
-    
+
         echo "Copying NoMount source..."
-    
         cp -av "$NOMOUNT_FOLDER/kernel/src/." "$COMMON_KERNEL_FOLDER/fs/"
-    
+
         if [ ! -f "$COMMON_KERNEL_FOLDER/fs/nomount.c" ]; then
           echo "::error::nomount.c was not copied successfully"
           exit 1
         fi
-    
+
         if [ ! -f "$COMMON_KERNEL_FOLDER/fs/nomount.h" ]; then
           echo "::error::nomount.h was not copied successfully"
           exit 1
         fi
-    
+
         echo "✅ NoMount source copied"
-    
+
         NOMOUNT_PATCH="$NOMOUNT_FOLDER/kernel/nomount_${KERNEL_VER}_kernel_integration.patch"
-    
         echo "Using NoMount patch: $NOMOUNT_PATCH"
-    
+
         if [ ! -f "$NOMOUNT_PATCH" ]; then
           echo "::error::NoMount patch not found: $NOMOUNT_PATCH"
           exit 1
         fi
-    
+
         echo "Applying NoMount patch..."
-    
         if ! patch -p1 --forward < "$NOMOUNT_PATCH"; then
           echo "::error::NoMount patch failed. Dumping all .rej files:"
           find . -name "*.rej" -exec echo "=== {} ===" \; -exec cat {} \;
           exit 1
         fi
-    
+
         echo "✅ NoMount patch applied"
-    
         echo "Adding NoMount configuration..."
-        
+
         if ! grep -q "^CONFIG_NOMOUNT=y" "$COMMON_KERNEL_FOLDER/arch/arm64/configs/gki_defconfig"; then
           printf '%s\n' 'CONFIG_NOMOUNT=y' >> "$COMMON_KERNEL_FOLDER/arch/arm64/configs/gki_defconfig"
         fi
-    
+
         echo "Verifying NoMount files..."
         ls -l "$COMMON_KERNEL_FOLDER/fs"/nomount*
-    
+
         echo "✅ NoMount integration completed"
-    
         echo "::endgroup::"
 
     - name: Add BBG
