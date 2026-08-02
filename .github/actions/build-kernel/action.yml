@@ -1258,6 +1258,7 @@ runs:
       run: |
         set -euo pipefail
         echo "::group::Apply NoMount"
+
         cd "$COMMON_KERNEL_FOLDER"
 
         echo "Copying NoMount source..."
@@ -1275,7 +1276,15 @@ runs:
 
         echo "✅ NoMount source copied"
 
+        echo "Listing NoMount kernel directory..."
+        ls -lah "$NOMOUNT_FOLDER/kernel"
+
+        echo ""
+        echo "Available NoMount patches:"
+        find "$NOMOUNT_FOLDER/kernel" -maxdepth 1 -type f -name "*.patch" | sort
+
         NOMOUNT_PATCH="$NOMOUNT_FOLDER/kernel/nomount_${KERNEL_VER}_kernel_integration.patch"
+
         echo "Using NoMount patch: $NOMOUNT_PATCH"
 
         if [ ! -f "$NOMOUNT_PATCH" ]; then
@@ -1284,6 +1293,7 @@ runs:
         fi
 
         echo "Applying NoMount patch..."
+
         if ! patch -p1 --forward < "$NOMOUNT_PATCH"; then
           echo "::error::NoMount patch failed. Dumping all .rej files:"
           find . -name "*.rej" -exec echo "=== {} ===" \; -exec cat {} \;
@@ -1291,6 +1301,7 @@ runs:
         fi
 
         echo "✅ NoMount patch applied"
+
         echo "Adding NoMount configuration..."
 
         if ! grep -q "^CONFIG_NOMOUNT=y" "$COMMON_KERNEL_FOLDER/arch/arm64/configs/gki_defconfig"; then
@@ -1301,6 +1312,7 @@ runs:
         ls -l "$COMMON_KERNEL_FOLDER/fs"/nomount*
 
         echo "✅ NoMount integration completed"
+
         echo "::endgroup::"
 
     - name: Add BBG
