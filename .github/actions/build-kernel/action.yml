@@ -1297,11 +1297,9 @@ runs:
         echo "✅ NoMount patch applied"
     
         echo "Adding NoMount configuration..."
-    
+        
         if ! grep -q "^CONFIG_NOMOUNT=y" "$COMMON_KERNEL_FOLDER/arch/arm64/configs/gki_defconfig"; then
-          cat >> "$COMMON_KERNEL_FOLDER/arch/arm64/configs/gki_defconfig" <<EOF
-    CONFIG_NOMOUNT=y
-    EOF
+          printf '%s\n' 'CONFIG_NOMOUNT=y' >> "$COMMON_KERNEL_FOLDER/arch/arm64/configs/gki_defconfig"
         fi
     
         echo "Verifying NoMount files..."
