@@ -1280,12 +1280,18 @@ runs:
         ls -lah "$NOMOUNT_FOLDER/kernel"
 
         echo ""
+        echo "Listing NoMount patches directory..."
+        ls -lah "$NOMOUNT_FOLDER/kernel/patches"
+
+        echo ""
         echo "Available NoMount patches:"
-        find "$NOMOUNT_FOLDER/kernel" -maxdepth 1 -type f -name "*.patch" | sort
+        find "$NOMOUNT_FOLDER/kernel/patches" -maxdepth 1 -type f -name "*.patch" | sort
 
-        NOMOUNT_PATCH="$NOMOUNT_FOLDER/kernel/nomount_${KERNEL_VER}_kernel_integration.patch"
+        NOMOUNT_PATCH="$NOMOUNT_FOLDER/kernel/patches/nomount_${KERNEL_VER}_kernel_integration.patch"
 
-        echo "Using NoMount patch: $NOMOUNT_PATCH"
+        echo ""
+        echo "Using NoMount patch:"
+        echo "$NOMOUNT_PATCH"
 
         if [ ! -f "$NOMOUNT_PATCH" ]; then
           echo "::error::NoMount patch not found: $NOMOUNT_PATCH"
